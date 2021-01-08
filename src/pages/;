@@ -1,0 +1,152 @@
+<template>
+  <div>
+    <master-main class="static">
+      <div class="card w-11/12">
+        <div class="w-full flex">
+          <div class="w-1/2 px-4">
+            <h1>入出库管理</h1>
+            <div class="action-bar">
+              <button class="add-button" @click="add">添加 +</button>
+              <div class="flex-grow"> </div>
+              <button class="add-button" @click="add">Clear Selection</button>
+            </div>
+            <div class="action-bar">
+              <input type="text" class="flex-grow mr-2" v-model="searchQuery" />
+              <button class="w-1/6 btn-blue" @click="search">查询</button>
+            </div>
+            <datagrid
+              :data-table="listData"
+              :columns="columns"
+              :column-headers="columnHeaders"
+              @rowClick="rowClick"
+              @editClick="edit"
+              @deleteClick="remove"
+            ></datagrid>
+          </div>
+          <div class="w-1/2">
+            <storage-log :storage-id="clickedRow" />
+          </div>
+        </div>
+      </div>
+    </master-main>
+    <modal :is-visible="modalVisible" @modalClosing="closeModal">
+      <div class="card w-3/4">
+        <h1>{{isUpdate ? '修改员工' : '添加员工'}}</h1>
+        <div class="inner-container">
+          <div class="form-component">
+            <label>产品</label>
+            <p v-if="validations['goods_id']" class="error">{{validations['goods_id'][0]}}</p>
+            <datagrid
+              :data-table="listGoodsData"
+              :columns="goodsColumns"
+              :column-headers="goodsColumnHeaders"
+              :selection-mode="true"
+              :selected.sync="form.goods_id"
+              selectionKey="id"
+              selectionName="goods"
+            />
+          </div>
+          <div class="form-component">
+            <label>仓库</label>
+            <p v-if="validations['warehouse_id']" class="error">{{validations['warehouse_id'][0]}}</p>
+            <datagrid
+              :data-table="listWarehouseData"
+              :columns="warehouseColumns"
+              :column-headers="warehouseColumnHeaders"
+              :selection-mode="true"
+              :selected.sync="form.warehouse_id"
+              selectionKey="id"
+              selectionName="warehouse"
+            />
+          </div>
+          <div class="form-component" v-if="isUpdate">
+            <label>编号</label>
+            <input type="text" v-model="form.id" disabled />
+          </div>
+          <div class="form-component" v-if="isUpdate">
+            <input type="hidden" v-model="form.quantity" disabled />
+          </div>
+          <div class="form-component">
+            <button class="btn-blue w-full py-3" @click="submit">提交</button>
+          </div>
+        </div>
+      </div>
+    </modal>
+  </div>
+</template>
+
+<script>
+import MasterMain from "@/components/MasterMain";
+import BaseServices from "@/components/services/BaseServices";
+import Modal from "@/components/Modal";
+import Functions from "@/components/Functions";
+import StorageLog from "@/components/StorageLog";
+import Datagrid from "@/components/Datagrid";
+
+const service = new BaseServices("storage");
+const warehouseSrv = new BaseServices("warehouse");
+const goodsSrv = new BaseServices("goods", "goods");
+
+export default {
+  name: "Storages",
+  components: { Modal, Datagrid, MasterMain, StorageLog },
+  data() {
+    return {
+      searchQuery: "",
+      service,
+      validations: [],
+      listData: [],
+      columns: [
+        "goods.name",
+        "goods.provider.name",
+        "warehouse.name",
+        "quantity",
+      ],
+      columnHeaders: ["产品", "提供者", "仓库", "数量"],
+      listGoodsData: [],
+      goodsColumns: ["id", "name", "provider.name"],
+      goodsColumnHeaders: ["编号", "产品", "提供者"],
+      listWarehouseData: [],
+      warehouseColumns: ["id", "name", "address"],
+      warehouseColumnHeaders: ["仓库编号", "名称", "地址"],
+      modalVisible: false,
+      isUpdate: false,
+      clickedRow: 0,
+      form: {
+        goods_id: 0,
+        warehouse_id: 0,
+        quantity: 0,
+      },
+    };
+  },
+  async mounted() {
+    this.loadAll();
+  },
+  methods: {
+    ...Functions,
+    async beforeAdd() {
+      this.listGoodsData = await goodsSrv.getAll("").then((res) => res);
+      this.listWarehouseData = await warehouseSrv.getAll("").then((res) => res);
+    },
+    async beforeEdit() {
+      this.beforeAdd();
+    },
+    rowClick(data) {
+      this.clickedRow = data.id;
+    },
+    // updateWarehouseSelection(ev) {
+    //   console.log("warehouse", ev);
+    // },
+    //
+    // updateGoodsSelection(ev) {
+    //   console.log("goods", ev);
+    // },
+  },
+};
+</script>
+
+<style lang="postcss">
+tbody td {
+  @apply p-1 text-sm;
+}
+</style>
