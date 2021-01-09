@@ -4,13 +4,13 @@
       <thead>
         <td>编号</td>
         <td v-for="(key, i) in getHeader" :key="i">{{headerCase(key)}}</td>
-        <td colspan="2">操作</td>
+        <td colspan="2" v-if="hasEditListener || hasdeleteClick || selectionMode">操作</td>
       </thead>
       <tbody>
         <tr
           v-for="(data, index) in table"
           :key="index"
-          :class="[showClicked && clickedRow == q(data, selectionKey) ?'selected':'', getRowClass(data)]"
+          :class="[hasClickedRow && clickedRow == q(data, selectionKey) ?'selected':'', getRowClass(data)]"
         >
           <td>{{index+1}}</td>
           <td
@@ -18,11 +18,10 @@
             :key="i"
             @click="rowClickedEvent($event, data, index)"
           >{{format(q(data, prop))}}</td>
-
-          <td v-if="!selectionMode">
+          <td v-if="hasEditListener">
             <a @click="editEvent($event, data)">修改</a>
           </td>
-          <td v-if="!selectionMode">
+          <td v-if="hasdeleteClick">
             <a @click="deleteEvent($event, data)">删除</a>
           </td>
           <td v-if="selectionMode">
@@ -55,13 +54,13 @@ export default {
     "selectionMode",
     "selectionKey",
     "selectionName",
+    "clickedRow",
     "selected",
     "rowClass",
     "filter",
   ],
   data() {
     return {
-      clickedRow: -1,
     };
   },
   computed: {
@@ -79,6 +78,15 @@ export default {
         return false;
       });
     },
+      hasClickedRow(){
+          return hasOwnProperty.call(this.$options.propsData, 'clickedRow') && this.clickedRow != undefined;
+      },
+      hasEditListener(){
+          return this.$listeners && this.$listeners.editClick;
+      },
+      hasdeleteClick(){
+          return this.$listeners && this.$listeners.deleteClick;
+      },
     getColumns() {
       if (!this.columns || this.columns.length === 0) {
         return Object.keys(this.dataTable[0]);
@@ -128,11 +136,11 @@ export default {
       this.$emit("deleteClick", param);
     },
     rowClickedEvent(ev, param) {
-      if (!this.showClicked) return;
+      if (!this.hasClickedRow) return;
       const val = this.q(param, this.selectionKey);
+        console.log(this.selectionKey, val);
       this.$emit("update:clickedRow", val);
       this.$emit("rowClick", val);
-      this.clickedRow = val;
     },
   },
 };

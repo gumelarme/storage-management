@@ -19,7 +19,6 @@
               :data-table="listData"
               :columns="columns"
               :column-headers="columnHeaders"
-              :showClicked="true"
               :clickedRow.sync="clickedRowId"
               selectionKey="id"
               :filter="searchQuery"
@@ -163,6 +162,7 @@ export default {
   methods: {
     ...Functions,
     async beforeAdd() {
+        this.form.quantity = 0;
       this.listGoodsData = await goodsSrv.getAll("").then((res) => res);
       this.listWarehouseData = await warehouseSrv.getAll("").then((res) => res);
     },
@@ -208,6 +208,7 @@ export default {
         }
         this.loadAll();
         this.inoutForm = {
+            ...this.inoutForm,
             quantity: 0,
             description: '',
         };
