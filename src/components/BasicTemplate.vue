@@ -1,7 +1,7 @@
 <template>
   <div>
     <master-main class="static">
-      <div class="card w-3/4 flex">
+      <div class="card  w-10/12 lg:w-1/2 flex">
         <div class="flex-grow">
           <h1>{{title}}</h1>
           <div class="action-bar">

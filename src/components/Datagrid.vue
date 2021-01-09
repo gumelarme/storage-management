@@ -18,10 +18,12 @@
             :key="i"
             @click="rowClickedEvent($event, data, index)"
           >{{format(q(data, prop))}}</td>
-          <td v-if="hasEditListener">
+          <td v-if="hasEditListener"
+            @click="rowClickedEvent($event, data, index)">
             <a @click="editEvent($event, data)">修改</a>
           </td>
-          <td v-if="hasdeleteClick">
+          <td v-if="hasdeleteClick"
+            @click="rowClickedEvent($event, data, index)">
             <a @click="deleteEvent($event, data)">删除</a>
           </td>
           <td v-if="selectionMode">

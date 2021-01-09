@@ -13,7 +13,11 @@
         @editClick="edit"
         @removeClick="remove"
       >
-        <div class="w-3/6 px-4">
+      </basic-template>
+    </div>
+    <modal :is-visible="modalVisible" @modalClosing="closeModal">
+      <div class="card w-1/3 max-h-full">
+        <div class="mb-6" v-if="isUpdate">
           <h1 v-if="rowClicked > 0" class="pb-4">{{selectedWarehouse}}</h1>
           <datagrid
             :dataTable="listStorageData"
@@ -21,10 +25,6 @@
             :column-headers="storageColumnHeaders"
           ></datagrid>
         </div>
-      </basic-template>
-    </div>
-    <modal :is-visible="modalVisible" @modalClosing="closeModal">
-      <div class="card w-1/3 max-h-full">
         <h1>{{isUpdate? '修改仓库' : '添加仓库'}}</h1>
         <div class="inner-container">
           <div class="form-component" v-if="isUpdate">

@@ -72,9 +72,9 @@ export default {
       form: {
         id: 0,
           is_manager: false,
-        username: "netuinha",
-        password: "something",
-        repassword: "something",
+        username: "",
+        password: "",
+        repassword: "",
       },
     };
   },

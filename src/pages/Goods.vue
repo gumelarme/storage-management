@@ -26,7 +26,7 @@
           />
         </div>
         <div class="form-component" v-if="isUpdate">
-          <label>工作编号</label>
+          <label>编号</label>
           <input type="text" v-model="form.id" disabled />
         </div>
         <div class="form-component">

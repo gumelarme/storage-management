@@ -85,7 +85,7 @@ export default {
 
 <style scoped lang='postcss'>
 #container {
-  @apply mt-56;
+  @apply mt-72;
 }
 
 .header-menu {

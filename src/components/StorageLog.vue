@@ -109,7 +109,7 @@ export default {
         "description",
         "user.username",
       ],
-      columnHeaders: ["编号", "仓库", "数量", "日期", "备注", "员工"],
+      columnHeaders: ["产品", "仓库", "数量", "日期", "备注", "员工"],
       listStorageData: [],
       storageColumns: [
         "goods.name",
